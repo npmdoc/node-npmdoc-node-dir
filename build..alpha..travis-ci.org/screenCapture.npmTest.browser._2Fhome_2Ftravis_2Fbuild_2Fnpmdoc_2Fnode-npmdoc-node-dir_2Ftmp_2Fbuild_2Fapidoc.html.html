@@ -1,0 +1,734 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/fshost">node-dir (v0.1.16)</a>
+</h1>
+<h4>asynchronous file and directory operations for Node.js</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.node-dir">module node-dir</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.files">
+            function <span class="apidocSignatureSpan">node-dir.</span>files
+            <span class="apidocSignatureSpan">(dir, type, callback, ignoreType)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.paths">
+            function <span class="apidocSignatureSpan">node-dir.</span>paths
+            <span class="apidocSignatureSpan">(dir, combine, callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.readFiles">
+            function <span class="apidocSignatureSpan">node-dir.</span>readFiles
+            <span class="apidocSignatureSpan">(dir, options, callback, complete)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.readFilesStream">
+            function <span class="apidocSignatureSpan">node-dir.</span>readFilesStream
+            <span class="apidocSignatureSpan">(dir, options, callback, complete)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.subdirs">
+            function <span class="apidocSignatureSpan">node-dir.</span>subdirs
+            <span class="apidocSignatureSpan">(dir, callback)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.node-dir.paths">module node-dir.paths</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.paths.paths">
+            function <span class="apidocSignatureSpan">node-dir.</span>paths
+            <span class="apidocSignatureSpan">(dir, combine, callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.paths.files">
+            function <span class="apidocSignatureSpan">node-dir.paths.</span>files
+            <span class="apidocSignatureSpan">(dir, type, callback, ignoreType)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-dir.paths.subdirs">
+            function <span class="apidocSignatureSpan">node-dir.paths.</span>subdirs
+            <span class="apidocSignatureSpan">(dir, callback)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.node-dir" id="apidoc.module.node-dir">module node-dir</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.files" id="apidoc.element.node-dir.files">
+        function <span class="apidocSignatureSpan">node-dir.</span>files
+        <span class="apidocSignatureSpan">(dir, type, callback, ignoreType)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function files(dir, type, callback, ignoreType) {
+
+    var pending,
+        results = {
+            files: [],
+            dirs: []
+        };
+    var done = function() {
+        if (ignoreType || type === 'all') {
+            callback(null, results);
+        } else {
+            callback(null, results[type + 's']);
+        }
+    };
+
+    var getStatHandler = function(statPath, lstatCalled) {
+        return function(err, stat) {
+            if (err) {
+                if (!lstatCalled) {
+                    return fs.lstat(statPath, getStatHandler(statPath, true));
+                }
+                return callback(err);
+            }
+            if (stat &amp;&amp; stat.isDirectory() &amp;&amp; stat.mode !== 17115) {
+                if (type !== 'file') {
+                    results.dirs.push(statPath);
+                }
+                files(statPath, type, function(err, res) {
+                    if (err) return callback(err);
+                    if (type === 'all') {
+                        results.files = results.files.concat(res.files);
+                        results.dirs = results.dirs.concat(res.dirs);
+                    } else if (type === 'file') {
+                        results.files = results.files.concat(res.files);
+                    } else {
+                        results.dirs = results.dirs.concat(res.dirs);
+                    }
+                    if (!--pending) done();
+                }, true);
+            } else {
+                if (type !== 'dir') {
+                    results.files.push(statPath);
+                }
+                // should be the last statement in statHandler
+                if (!--pending) done();
+            }
+        };
+    };
+
+    if (typeof type !== 'string') {
+        ignoreType = callback;
+        callback = type;
+        type = 'file';
+    }
+
+    fs.stat(dir, function(err, stat) {
+        if (err) return callback(err);
+        if(stat &amp;&amp; stat.mode === 17115) return done();
+
+        fs.readdir(dir, function(err, list) {
+            if (err) return callback(err);
+            pending = list.length;
+            if (!pending) return done();
+            for (var file, i = 0, l = list.length; i &lt; l; i++) {
+                file = path.join(dir, list[i]);
+                fs.stat(file, getStatHandler(file));
+            }
+        });
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```
+
+
+#### files( dir, callback )
+Asynchronously iterate the files of a directory and its subdirectories and pass an array of file paths to a callback.
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">files</span>(__dirname, function(err, files) {
+    if (err) throw err;
+    console.log(files);
+});
+```
+
+Note that for the files and subdirs the object returned is an array, and thus all of the standard array methods are available for
+ use in your callback for operations like filters or sorting. Some quick examples:
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.paths" id="apidoc.element.node-dir.paths">
+        function <span class="apidocSignatureSpan">node-dir.</span>paths
+        <span class="apidocSignatureSpan">(dir, combine, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function paths(dir, combine, callback) {
+
+    var type;
+
+    if (typeof combine === 'function') {
+        callback = combine;
+        combine = false;
+    }
+
+    exports.files(dir, 'all', function(err, results) {
+        if (err) return callback(err);
+        if (combine) {
+
+            callback(null, results.files.concat(results.dirs));
+        } else {
+            callback(null, results);
+        }
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+#### paths(dir, [combine], callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of both file and directory paths
+ to a callback.
+
+Separated into two distinct arrays (paths.files and paths.dirs)
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">paths</span>(__dirname, function(err, paths) {
+    if (err) throw err;
+    console.log('files:\n',paths.files);
+    console.log('subdirs:\n', paths.dirs);
+});
+```
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.readFiles" id="apidoc.element.node-dir.readFiles">
+        function <span class="apidocSignatureSpan">node-dir.</span>readFiles
+        <span class="apidocSignatureSpan">(dir, options, callback, complete)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function readFiles(dir, options, callback, complete) {
+    if (typeof options === 'function') {
+        complete = callback;
+        callback = options;
+        options = {};
+    }
+    if (typeof options === 'string') options = {
+        encoding: options
+    };
+    options = extend({
+        recursive: true,
+        encoding: 'utf8',
+        doneOnErr: true
+    }, options);
+    var files = [];
+
+    var done = function(err) {
+        if (typeof complete === 'function') {
+            if (err) return complete(err);
+            complete(null, files);
+        }
+    };
+
+    fs.readdir(dir, function(err, list) {
+        if (err) Â&nbsp;{
+            if (options.doneOnErr === true) {
+              if (err.code === 'EACCES') return done();
+              return done(err);
+            }
+        }
+        var i = 0;
+
+        if (options.reverse === true ||
+            (typeof options.sort == 'string' &amp;&amp;
+                (/reverse|desc/i).test(options.sort))) {
+            list = list.reverse();
+        } else if (options.sort !== false) list = list.sort();
+
+        (function next() {
+            var filename = list[i++];
+            if (!filename) return done(null, files);
+            var file = path.join(dir, filename);
+            fs.stat(file, function(err, stat) {
+                if (err &amp;&amp; options.doneOnErr === true) return done(err);
+                if (stat &amp;&amp; stat.isDirectory()) {
+                    if (options.recursive) {
+                        if (options.matchDir &amp;&amp; !matches(filename, options.matchDir)) return next();
+                        if (options.excludeDir &amp;&amp; matches(filename, options.excludeDir)) return next();
+                        readFiles(file, options, callback, function(err, sfiles) {
+                            if (err &amp;&amp; options.doneOnErr === true) return done(err);
+                            files = files.concat(sfiles);
+                            next();
+                        });
+                    } else next();
+                } else if (stat &amp;&amp; stat.isFile()) {
+                    if (options.match &amp;&amp; !matches(filename, options.match)) return next();
+                    if (options.exclude &amp;&amp; matches(filename, options.exclude)) return next();
+                    if (options.filter &amp;&amp; !options.filter(filename)) return next();
+                    if (options.shortName) files.push(filename);
+                    else files.push(file);
+                    fs.readFile(file, options.encoding, function(err, data) {
+                        if (err) {
+                            if (err.code === 'EACCES') return next();
+                            if (options.doneOnErr === true) {
+                                return done(err);
+                            }
+                        }
+                        if (callback.length &gt; 3)
+                            if (options.shortName) callback(null, data, filename, next);
+                            else callback(null, data, file, next);
+                            else callback(null, data, next);
+                    });
+                }
+                else {
+                    next();
+                }
+            });
+        })();
+
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+A reverse sort can also be achieved by setting the sort option to 'reverse', 'desc', or 'descending'
+; string value.
+
+examples
+
+```javascript
+// display contents of files in this script's directory
+dir.<span class="apidocCodeKeywordSpan">readFiles</span>(__dirname,
+function(err, content, next) {
+    if (err) throw err;
+    console.log('content:', content);
+    next();
+},
+function(err, files){
+    if (err) throw err;
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.readFilesStream" id="apidoc.element.node-dir.readFilesStream">
+        function <span class="apidocSignatureSpan">node-dir.</span>readFilesStream
+        <span class="apidocSignatureSpan">(dir, options, callback, complete)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function readFilesStream(dir, options, callback, complete) {
+    if (typeof options === 'function') {
+        complete = callback;
+        callback = options;
+        options = {};
+    }
+    if (typeof options === 'string') options = {
+        encoding: options
+    };
+    options = extend({
+        recursive: true,
+        encoding: 'utf8',
+        doneOnErr: true
+    }, options);
+    var files = [];
+
+    var done = function(err) {
+        if (typeof complete === 'function') {
+            if (err) return complete(err);
+            complete(null, files);
+        }
+    };
+
+    fs.readdir(dir, function(err, list) {
+        if (err) Â&nbsp;{
+            if (options.doneOnErr === true) {
+              if (err.code === 'EACCES') return done();
+              return done(err);
+            }
+        }
+        var i = 0;
+
+        if (options.reverse === true ||
+            (typeof options.sort == 'string' &amp;&amp;
+                (/reverse|desc/i).test(options.sort))) {
+            list = list.reverse();
+        } else if (options.sort !== false) list = list.sort();
+
+        (function next() {
+            var filename = list[i++];
+            if (!filename) return done(null, files);
+            var file = path.join(dir, filename);
+            fs.stat(file, function(err, stat) {
+                if (err &amp;&amp; options.doneOnErr === true) return done(err);
+                if (stat &amp;&amp; stat.isDirectory()) {
+                    if (options.recursive) {
+                        if (options.matchDir &amp;&amp; !matches(filename, options.matchDir)) return next();
+                        if (options.excludeDir &amp;&amp; matches(filename, options.excludeDir)) return next();
+                        readFilesStream(file, options, callback, function(err, sfiles) {
+                            if (err &amp;&amp; options.doneOnErr === true) return done(err);
+                            files = files.concat(sfiles);
+                            next();
+                        });
+                    } else next();
+                } else if (stat &amp;&amp; stat.isFile()) {
+                    if (options.match &amp;&amp; !matches(filename, options.match)) return next();
+                    if (options.exclude &amp;&amp; matches(filename, options.exclude)) return next();
+                    if (options.filter &amp;&amp; !options.filter(filename)) return next();
+                    if (options.shortName) files.push(filename);
+                    else files.push(file);
+                    var stream = fs.createReadStream(file);
+                    if (options.encoding !== null) {
+                        stream.setEncoding(options.encoding);
+                    }
+                    stream.on('error',function(err) {
+                      if (options.doneOnErr === true) return done(err);
+                      next();
+                    });
+                    if (callback.length &gt; 3)
+                        if (options.shortName) callback(null, stream, filename, next);
+                        else callback(null, stream, file, next);
+                        else callback(null, stream, next);
+                }
+                else {
+                  next();
+                }
+            });
+        })();
+
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+},
+function(err, files){
+    if (err) throw err;
+    console.log('finished reading files:', files);
+});
+
+// display contents of huge files in this script's directory
+dir.<span class="apidocCodeKeywordSpan">readFilesStream</span>(__dirname,
+function(err, stream, next) {
+    if (err) throw err;
+    var content = '';
+    stream.on('data',function(buffer) {
+        content += buffer.toString();
+    });
+    stream.on('end',function() {
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.subdirs" id="apidoc.element.node-dir.subdirs">
+        function <span class="apidocSignatureSpan">node-dir.</span>subdirs
+        <span class="apidocSignatureSpan">(dir, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function subdirs(dir, callback) {
+    exports.files(dir, 'dir', function(err, subdirs) {
+        if (err) return callback(err);
+        callback(null, subdirs);
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Also note that if you need to work with the contents of the files asynchronously, please use the readFiles method.  The files and
+ subdirs methods are for getting a list of the files or subdirs in a directory as an array.
+
+#### subdirs( dir, callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of directory paths to a callback
+.
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">subdirs</span>(__dirname, function(err, subdirs) {
+    if (err) throw err;
+    console.log(subdirs);
+});
+```
+
+#### paths(dir, [combine], callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of both file and directory paths
+ to a callback.
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.node-dir.paths" id="apidoc.module.node-dir.paths">module node-dir.paths</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.paths.paths" id="apidoc.element.node-dir.paths.paths">
+        function <span class="apidocSignatureSpan">node-dir.</span>paths
+        <span class="apidocSignatureSpan">(dir, combine, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function paths(dir, combine, callback) {
+
+    var type;
+
+    if (typeof combine === 'function') {
+        callback = combine;
+        combine = false;
+    }
+
+    exports.files(dir, 'all', function(err, results) {
+        if (err) return callback(err);
+        if (combine) {
+
+            callback(null, results.files.concat(results.dirs));
+        } else {
+            callback(null, results);
+        }
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+#### paths(dir, [combine], callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of both file and directory paths
+ to a callback.
+
+Separated into two distinct arrays (paths.files and paths.dirs)
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">paths</span>(__dirname, function(err, paths) {
+    if (err) throw err;
+    console.log('files:\n',paths.files);
+    console.log('subdirs:\n', paths.dirs);
+});
+```
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.paths.files" id="apidoc.element.node-dir.paths.files">
+        function <span class="apidocSignatureSpan">node-dir.paths.</span>files
+        <span class="apidocSignatureSpan">(dir, type, callback, ignoreType)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function files(dir, type, callback, ignoreType) {
+
+    var pending,
+        results = {
+            files: [],
+            dirs: []
+        };
+    var done = function() {
+        if (ignoreType || type === 'all') {
+            callback(null, results);
+        } else {
+            callback(null, results[type + 's']);
+        }
+    };
+
+    var getStatHandler = function(statPath, lstatCalled) {
+        return function(err, stat) {
+            if (err) {
+                if (!lstatCalled) {
+                    return fs.lstat(statPath, getStatHandler(statPath, true));
+                }
+                return callback(err);
+            }
+            if (stat &amp;&amp; stat.isDirectory() &amp;&amp; stat.mode !== 17115) {
+                if (type !== 'file') {
+                    results.dirs.push(statPath);
+                }
+                files(statPath, type, function(err, res) {
+                    if (err) return callback(err);
+                    if (type === 'all') {
+                        results.files = results.files.concat(res.files);
+                        results.dirs = results.dirs.concat(res.dirs);
+                    } else if (type === 'file') {
+                        results.files = results.files.concat(res.files);
+                    } else {
+                        results.dirs = results.dirs.concat(res.dirs);
+                    }
+                    if (!--pending) done();
+                }, true);
+            } else {
+                if (type !== 'dir') {
+                    results.files.push(statPath);
+                }
+                // should be the last statement in statHandler
+                if (!--pending) done();
+            }
+        };
+    };
+
+    if (typeof type !== 'string') {
+        ignoreType = callback;
+        callback = type;
+        type = 'file';
+    }
+
+    fs.stat(dir, function(err, stat) {
+        if (err) return callback(err);
+        if(stat &amp;&amp; stat.mode === 17115) return done();
+
+        fs.readdir(dir, function(err, list) {
+            if (err) return callback(err);
+            pending = list.length;
+            if (!pending) return done();
+            for (var file, i = 0, l = list.length; i &lt; l; i++) {
+                file = path.join(dir, list[i]);
+                fs.stat(file, getStatHandler(file));
+            }
+        });
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```
+
+
+#### files( dir, callback )
+Asynchronously iterate the files of a directory and its subdirectories and pass an array of file paths to a callback.
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">files</span>(__dirname, function(err, files) {
+    if (err) throw err;
+    console.log(files);
+});
+```
+
+Note that for the files and subdirs the object returned is an array, and thus all of the standard array methods are available for
+ use in your callback for operations like filters or sorting. Some quick examples:
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-dir.paths.subdirs" id="apidoc.element.node-dir.paths.subdirs">
+        function <span class="apidocSignatureSpan">node-dir.paths.</span>subdirs
+        <span class="apidocSignatureSpan">(dir, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function subdirs(dir, callback) {
+    exports.files(dir, 'dir', function(err, subdirs) {
+        if (err) return callback(err);
+        callback(null, subdirs);
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Also note that if you need to work with the contents of the files asynchronously, please use the readFiles method.  The files and
+ subdirs methods are for getting a list of the files or subdirs in a directory as an array.
+
+#### subdirs( dir, callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of directory paths to a callback
+.
+
+```javascript
+dir.<span class="apidocCodeKeywordSpan">subdirs</span>(__dirname, function(err, subdirs) {
+    if (err) throw err;
+    console.log(subdirs);
+});
+```
+
+#### paths(dir, [combine], callback )
+Asynchronously iterate the subdirectories of a directory and its subdirectories and pass an array of both file and directory paths
+ to a callback.
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
