@@ -1,13 +1,13 @@
 <svg height="158" width="720" xmlns="http://www.w3.org/2000/svg">
 <rect height="158" fill="#555" width="720"></rect>
 <text fill="#7f7" font-family="Courier New" font-size="12" xml:space="preserve">
-<tspan x="10" y="26">  0.  2017-04-07 07:12:34 +0000    24071 bytes  .</tspan>
-<tspan x="10" y="42">  1.  2017-04-07 07:12:34 +0000     1098 bytes  LICENSE.txt</tspan>
-<tspan x="10" y="58">  2.  2017-04-07 07:12:34 +0000     6161 bytes  README.md</tspan>
-<tspan x="10" y="74">  3.  2017-04-07 07:12:34 +0000      255 bytes  index.js</tspan>
-<tspan x="10" y="90">  4.  2017-04-07 07:12:34 +0000     4661 bytes  lib/paths.js</tspan>
-<tspan x="10" y="106">  5.  2017-04-07 07:12:34 +0000     4628 bytes  lib/readfiles.js</tspan>
-<tspan x="10" y="122">  6.  2017-04-07 07:12:34 +0000     4821 bytes  lib/readfilesstream.js</tspan>
-<tspan x="10" y="138">  7.  2017-04-07 07:12:34 +0000     2447 bytes  package.json</tspan>
+<tspan x="10" y="26">  0.  2017-04-22 06:59:22 +0000    24071 bytes  .</tspan>
+<tspan x="10" y="42">  1.  2017-04-22 06:59:22 +0000     1098 bytes  LICENSE.txt</tspan>
+<tspan x="10" y="58">  2.  2017-04-22 06:59:22 +0000     6161 bytes  README.md</tspan>
+<tspan x="10" y="74">  3.  2017-04-22 06:59:22 +0000      255 bytes  index.js</tspan>
+<tspan x="10" y="90">  4.  2017-04-22 06:59:22 +0000     4661 bytes  lib/paths.js</tspan>
+<tspan x="10" y="106">  5.  2017-04-22 06:59:22 +0000     4628 bytes  lib/readfiles.js</tspan>
+<tspan x="10" y="122">  6.  2017-04-22 06:59:22 +0000     4821 bytes  lib/readfilesstream.js</tspan>
+<tspan x="10" y="138">  7.  2017-04-22 06:59:22 +0000     2447 bytes  package.json</tspan>
 </text>
 </svg>
